@@ -1,3 +1,5 @@
+import cors from "cors";
+
 const express = require("express")
 const cors = require("cors")
 const nodemailer = require("nodemailer");
@@ -68,3 +70,5 @@ new Promise(async function(resolve, reject) {
 app.listen(5000, function () {
     console.log("Server started...")
 })
+
+export default app;
