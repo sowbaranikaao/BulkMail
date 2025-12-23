@@ -17,7 +17,7 @@ function App() {
     setstatus(true);
 
     axios
-      .post("https://bulk-mail-8q3s.vercel.app/sendmail", {
+      .post(`${process.env.VITE_API_BASE_URL}/sendmail`, {
         msg,
         emailList,
       })
