@@ -1,86 +1,87 @@
-import cors from "cors";
 import express from "express";
-import mongoose from "mongoose"
+import cors from "cors";
+import mongoose from "mongoose";
 import sgMail from "@sendgrid/mail";
 import dotenv from "dotenv";
 
 dotenv.config();
 
+/* =====================
+   App Configuration
+===================== */
+
+const app = express();
+
+app.use(express.json());
+app.use(
+  cors({
+    origin: "https://bulk-mail-neon.vercel.app",
+  })
+);
+
+/* =====================
+   SendGrid Setup (ONCE)
+===================== */
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const express = require("express")
-const cors = require("cors")
-const nodemailer = require("nodemailer");
-const mongoose=require("mongoose")
-const sgMail = require("@sendgrid/mail");
+/* =====================
+   MongoDB Connection
+===================== */
 
-const app = express()
-app.use(express.json())
-app.use(cors({
-    origin: "https://bulk-mail-neon.vercel.app"
-}));
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB error:", err));
 
-mongoose.connect("mongodb+srv://sowbaranikaa4:1234@cluster0.25qlzvz.mongodb.net/passkey?appName=Cluster0").then(function(){
-    console.log("Connected to MongoDB")
-}).catch(function(){
-    console.log("Connection failed")
-})
+/* =====================
+   Email Send Function
+===================== */
 
-const credential=mongoose.model("credential",{},"bulkmail")
+const sendMails = async ({ message, emailList }) => {
+  try {
+    const promises = emailList.map((recipient) =>
+      sgMail.send({
+        to: recipient,
+        from: "sowbaranikaa12@gmail.com", // MUST be verified in SendGrid
+        subject: "You got a message from BulkMail App",
+        text: message,
+      })
+    );
 
+    await Promise.all(promises);
+    console.log("All emails sent successfully");
+    return true;
+  } catch (error) {
+    console.error(
+      "Email send error:",
+      error.response?.body || error.message
+    );
+    return false;
+  }
+};
 
+/* =====================
+   API Route
+===================== */
 
+app.post("/sendmail", async (req, res) => {
+  const { msg, emailList } = req.body;
 
-app.post("/sendmail", function (req, res) {
-    var msg = req.body.msg
-    var emailList = req.body.emailList
+  if (!msg || !emailList || emailList.length === 0) {
+    return res.status(400).send(false);
+  }
 
-    credential.find().then(function(data){
+  const result = await sendMails({
+    message: msg,
+    emailList,
+  });
 
-    const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: data[0].toJSON().user,
-        pass: data[0].toJSON().pass,
-    },
+  res.status(result ? 200 : 500).send(result);
 });
-new Promise(async function(resolve, reject) {
-        try{
-        for (var i = 0; i < emailList.length; i++) {
-        await transporter.sendMail({
-            from: "sowbaranikaa12@gmail.com",
-            to: emailList[i],
-            subject: "Test Email from Node.js",
-            text: msg
-        },
 
-        )
-        console.log("Email sent to : "+emailList[i])
-    }
-    resolve("Success")
-    }
-    catch(error){
-        reject("Failed")
-    }
-    }).then(function(){
-        res.send(true)
-    }).catch(function(){
-        res.send(false)
-    })
-
-}).catch(function(error){
-    console.log(error)
-})
-
-    
-    
-
-
-})
-
-app.listen(5000, function () {
-    console.log("Server started...")
-})
+/* =====================
+   Export for Vercel
+===================== */
 
 export default app;
