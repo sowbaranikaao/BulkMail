@@ -1,13 +1,25 @@
 import cors from "cors";
+import express from "express";
+import mongoose from "mongoose"
+import sgMail from "@sendgrid/mail";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const express = require("express")
 const cors = require("cors")
 const nodemailer = require("nodemailer");
 const mongoose=require("mongoose")
+const sgMail = require("@sendgrid/mail");
 
 const app = express()
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+    origin: "https://bulk-mail-neon.vercel.app"
+}));
 
 mongoose.connect("mongodb+srv://sowbaranikaa4:1234@cluster0.25qlzvz.mongodb.net/passkey?appName=Cluster0").then(function(){
     console.log("Connected to MongoDB")
