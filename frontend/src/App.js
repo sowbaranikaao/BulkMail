@@ -68,7 +68,7 @@ function App() {
       <div className="bg-violet-400 text-black items-center flex flex-col p-5">
         <textarea onChange={handlemsg} value={msg} placeholder='Enter the email text...' className='h-36 w-[80%] border py-2 px-2 border-black rounded-md'></textarea>
         <div>
-          <input onChange={handlefile} type="file" accept="xlxs,.xls" className='text-lg border-4 border-dashed border-white p-4 m-5' />
+          <input onChange={handlefile} type="file" className='text-lg border-4 border-dashed border-white p-4 m-5' />
         </div>
         <p className='text-lg'>Total Emails in the file: {emailList.length}</p>
         <button
