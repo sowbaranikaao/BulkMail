@@ -43,7 +43,7 @@ const sendMails = async ({ message, emailList }) => {
     const promises = emailList.map((recipient) =>
       sgMail.send({
         to: recipient,
-        from: "sowbaranikaa12@gmail.com", // MUST be verified in SendGrid
+        from: "sowbaranikaa4@gmail.com", // MUST be verified in SendGrid
         subject: "You got a message from BulkMail App",
         text: message,
       })
