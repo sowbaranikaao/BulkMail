@@ -17,7 +17,7 @@ function App() {
     setstatus(true);
 
     axios
-      .post(`${process.env.VITE_API_BASE_URL}/sendmail`, {
+      .post(import.meta.env.VITE_BACKEND_URL + "/sendmail", {
         msg,
         emailList,
       })
