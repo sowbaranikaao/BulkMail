@@ -7,7 +7,7 @@ require("dotenv").config();
 const app = express()
 
 app.use(express.json())
-app.use(cors({ origin: process.env.CLIENT_URL, }));
+app.use(cors());
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
