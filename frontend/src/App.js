@@ -17,7 +17,7 @@ function App() {
     setstatus(true);
 
     axios
-      .post(import.meta.env.VITE_BACKEND_URL + "/sendmail", {
+      .post("https://backend1-nj22.onrender.com/sendmail", {
         msg,
         emailList,
       })
@@ -38,7 +38,7 @@ function App() {
         setstatus(false);
       });
   }
-console.log("ENV:", import.meta.env.VITE_BACKEND_URL);
+console.log("ENV: https://backend1-nj22.onrender.com");
 
   function handlefile(event) {
     const file = event.target.files[0]
